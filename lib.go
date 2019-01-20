@@ -4,6 +4,9 @@ import (
 	"errors"
 )
 
+// TODO Better checkColumnCounts Error
+// maybe return error or panic
+
 // Vector type
 type Vector []float64
 
@@ -50,6 +53,20 @@ func (m Matrix) getRowCount() int {
 	return rows
 }
 
+// checkColumnCounts x
+func (m Matrix) checkColumnCounts() bool {
+	columns := m.getColumnsCount()
+
+	checker := columns[0]
+	for _, c := range columns {
+		if c != checker {
+			return false
+		}
+		checker = c
+	}
+	return true
+}
+
 // IsSameDimensions z
 func isSameDimensions(m1, m2 Matrix) bool {
 	if m1.getRowCount() != m2.getRowCount() {
@@ -74,6 +91,9 @@ func isSameDimensions(m1, m2 Matrix) bool {
 
 // IsSquare x
 func (m Matrix) IsSquare() bool {
+	if m.checkColumnCounts() == false {
+		panic("Matrix Columns Defined Wrong")
+	}
 	rows := m.getRowCount()
 	dim := m[0].getLen()
 	for _, v := range m {
@@ -92,6 +112,9 @@ func (m Matrix) IsSquare() bool {
 // IsIdentity x
 // warning check Rectangular Diagonal Matrices
 func (m Matrix) IsIdentity() (bool, error) {
+	if m.checkColumnCounts() == false {
+		panic("Matrix Columns Defined Wrong")
+	}
 	if m.IsSquare() == false {
 		return false, errors.New("matrix is not square")
 	}
@@ -113,6 +136,9 @@ func (m Matrix) IsIdentity() (bool, error) {
 
 // IsDiagonal x
 func (m Matrix) IsDiagonal() (bool, error) {
+	if m.checkColumnCounts() == false {
+		panic("Matrix Columns Defined Wrong")
+	}
 	if m.IsSquare() == false {
 		return false, errors.New("matrix is not square")
 	}
@@ -136,6 +162,9 @@ func (m Matrix) IsDiagonal() (bool, error) {
 func (m Matrix) Multiply(m2 Matrix) (Matrix, error) {
 	// future Cheap Fix for Column Counts Todo Later!!
 	// TODO - WRONG!!!
+	if m.checkColumnCounts() == false || m2.checkColumnCounts() == false {
+		panic("Matrix Columns Defined Wrong")
+	}
 	if m2.getRowCount() != m.getColumnsCount()[0] {
 		return nil, errors.New("matrix dimensions are not suitable for dot product")
 	}
@@ -165,6 +194,9 @@ func (m Matrix) Multiply(m2 Matrix) (Matrix, error) {
 
 // ScalarMulti (Matrix x Scalar)
 func (m Matrix) ScalarMulti(num float64) Matrix {
+	if m.checkColumnCounts() == false {
+		panic("Matrix Columns Defined Wrong")
+	}
 	var newMatrix Matrix
 	for _, v := range m {
 		var newV Vector
@@ -179,6 +211,9 @@ func (m Matrix) ScalarMulti(num float64) Matrix {
 
 // Add x
 func (m Matrix) Add(m2 Matrix) (Matrix, error) {
+	if m.checkColumnCounts() == false || m2.checkColumnCounts() == false {
+		panic("Matrix Columns Defined Wrong")
+	}
 	var newMatrix Matrix
 	t := isSameDimensions(m, m2)
 	if t == false {
@@ -201,6 +236,9 @@ func (m Matrix) Add(m2 Matrix) (Matrix, error) {
 
 // Negative x
 func (m Matrix) Negative() Matrix {
+	if m.checkColumnCounts() == false {
+		panic("Matrix Columns Defined Wrong")
+	}
 	var newMatrix Matrix
 
 	for _, v := range m {
@@ -216,11 +254,14 @@ func (m Matrix) Negative() Matrix {
 
 // Subtract x
 func (m Matrix) Subtract(m2 Matrix) (Matrix, error) {
-	var newMatrix Matrix
+	if m.checkColumnCounts() == false || m2.checkColumnCounts() == false {
+		panic("Matrix Columns Defined Wrong")
+	}
 	t := isSameDimensions(m, m2)
 	if t == false {
 		return nil, errors.New("matrices dimensions are not same")
 	}
+	var newMatrix Matrix
 
 	l := m.getRowCount()
 
@@ -238,6 +279,9 @@ func (m Matrix) Subtract(m2 Matrix) (Matrix, error) {
 
 // Divide x
 func (m Matrix) Divide(m2 Matrix) (Matrix, error) {
+	if m.checkColumnCounts() == false || m2.checkColumnCounts() == false {
+		panic("Matrix Columns Defined Wrong")
+	}
 	var newMatrix Matrix
 	// need inverse for this
 	return newMatrix, nil
@@ -246,6 +290,9 @@ func (m Matrix) Divide(m2 Matrix) (Matrix, error) {
 // GetSubMatrix x
 // maybe check for squareness of matrix
 func (m Matrix) GetSubMatrix() []Matrix {
+	if m.checkColumnCounts() == false {
+		panic("Matrix Columns Defined Wrong")
+	}
 	var subMatrices []Matrix
 	var newMatrix Matrix
 
@@ -272,6 +319,9 @@ func (m Matrix) GetSubMatrix() []Matrix {
 
 // Swap x
 func (m Matrix) Swap() (Matrix, error) {
+	if m.checkColumnCounts() == false {
+		panic("Matrix Columns Defined Wrong")
+	}
 	if m.IsSquare() != true {
 		return nil, errors.New("matrix is not square")
 	}
@@ -290,6 +340,9 @@ func (m Matrix) Swap() (Matrix, error) {
 
 // Determinant x
 func (m Matrix) Determinant() (float64, error) {
+	if m.checkColumnCounts() == false {
+		panic("Matrix Columns Defined Wrong")
+	}
 	if m.IsSquare() != true {
 		return 0, errors.New("matrix is not square")
 	}
@@ -317,6 +370,9 @@ func (m Matrix) Determinant() (float64, error) {
 
 // Inverse x
 func (m Matrix) Inverse() (Matrix, error) {
+	if m.checkColumnCounts() == false {
+		panic("Matrix Columns Defined Wrong")
+	}
 	if m.IsSquare() == false {
 		return nil, errors.New("matrix is not square")
 	}
@@ -340,12 +396,28 @@ func (m Matrix) Inverse() (Matrix, error) {
 }
 
 // Transpose x
-func (m Matrix) Transpose() (Matrix, error) {
-	return nil, nil
+func (m Matrix) Transpose() Matrix {
+	if m.checkColumnCounts() == false {
+		panic("Matrix Columns Defined Wrong")
+	}
+	columns := m.getColumnsCount()[0]
+	var newMatrix Matrix
+	for i := 0; i < columns; i++ {
+		var newVector Vector
+		for _, v := range m {
+			// fmt.Println(v[i])
+			newVector = append(newVector, v[i])
+		}
+		newMatrix = append(newMatrix, newVector)
+	}
+	return newMatrix
 }
 
 // Trace x
 func (m Matrix) Trace() (float64, error) {
+	if m.checkColumnCounts() == false {
+		panic("Matrix Columns Defined Wrong")
+	}
 	if m.IsSquare() == false {
 		return 0.0, errors.New("matrix is not square")
 	}

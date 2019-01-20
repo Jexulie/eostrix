@@ -4,8 +4,10 @@ import (
 	"errors"
 )
 
+// Vector type
 type Vector []float64
 
+// Matrix type
 type Matrix []Vector
 
 // GetLen x
@@ -13,6 +15,7 @@ func (v Vector) getLen() int {
 	return len(v)
 }
 
+// getColumnsCount x
 func (m Matrix) getColumnsCount() []int {
 	var lengths []int
 	for _, v := range m {
@@ -67,6 +70,49 @@ func (m Matrix) IsSquare() bool {
 		return true
 	}
 	return false
+}
+
+// IsIdentity x
+// warning check Rectangular Diagonal Matrices
+func (m Matrix) IsIdentity() (bool, error) {
+	if m.IsSquare() == false {
+		return false, errors.New("matrix is not square")
+	}
+	for i := 0; i < m.getRowCount(); i++ {
+		for j := 0; j < m[i].getLen(); j++ {
+			if i == j {
+				if m[i][j] != 1 {
+					return false, nil
+				}
+			} else {
+				if m[i][j] != 0 {
+					return false, nil
+				}
+			}
+		}
+	}
+	return true, nil
+}
+
+// IsDiagonal x
+func (m Matrix) IsDiagonal() (bool, error) {
+	if m.IsSquare() == false {
+		return false, errors.New("matrix is not square")
+	}
+	for i := 0; i < m.getRowCount(); i++ {
+		for j := 0; j < m[i].getLen(); j++ {
+			if i == j {
+				if m[i][j] == 0 {
+					return false, nil
+				}
+			} else {
+				if m[i][j] != 0 {
+					return false, nil
+				}
+			}
+		}
+	}
+	return true, nil
 }
 
 // ScalarMulti x
@@ -149,19 +195,9 @@ func (m Matrix) Divide(m2 Matrix) (Matrix, error) {
 	return newMatrix, nil
 }
 
-// Inverse x
-func (m Matrix) Inverse() (Matrix, error) {
-	return nil, nil
-}
-
-// Transpose x
-func (m Matrix) Transpose() (Matrix, error) {
-	return nil, nil
-}
-
-// GetSubMatrix x // maybe check for squareness of matrix
+// GetSubMatrix x
+// maybe check for squareness of matrix
 func (m Matrix) GetSubMatrix() []Matrix {
-
 	var subMatrices []Matrix
 	var newMatrix Matrix
 
@@ -186,10 +222,27 @@ func (m Matrix) GetSubMatrix() []Matrix {
 	return subMatrices
 }
 
+// Swap x
+func (m Matrix) Swap() (Matrix, error) {
+	if m.IsSquare() != true {
+		return nil, errors.New("matrix is not square")
+	}
+	if m.getRowCount() == 2 {
+		// maybe Manuel Fix for now!
+		return Matrix{
+			Vector{m[1][1], m[0][1] * -1},
+			Vector{m[1][0] * -1, m[0][0]},
+		}, nil
+
+	} else if m.getRowCount() >= 3 {
+		// TODO for 3x3 or more
+	}
+	return nil, nil
+}
+
 // Determinant x
 func (m Matrix) Determinant() (float64, error) {
-	s := m.IsSquare()
-	if s != true {
+	if m.IsSquare() != true {
 		return 0, errors.New("matrix is not square")
 	}
 	if m.getRowCount() == 2 {
@@ -212,6 +265,51 @@ func (m Matrix) Determinant() (float64, error) {
 	} else {
 		return 0, errors.New("unknown error")
 	}
+}
+
+// Inverse x
+func (m Matrix) Inverse() (Matrix, error) {
+	if m.IsSquare() == false {
+		return nil, errors.New("matrix is not square")
+	}
+
+	if m.getRowCount() == 2 {
+		var newMatrix Matrix
+		det, _ := m.Determinant()
+		swapped, _ := m.Swap()
+		for _, v := range swapped {
+			var newVector Vector
+			for _, n := range v {
+				newVector = append(newVector, n/det)
+			}
+			newMatrix = append(newMatrix, newVector)
+		}
+		return newMatrix, nil
+	} else if m.getRowCount() >= 3 {
+		// TODO for 3x3 or more
+	}
+	return nil, nil
+}
+
+// Transpose x
+func (m Matrix) Transpose() (Matrix, error) {
+	return nil, nil
+}
+
+// Trace x
+func (m Matrix) Trace() (float64, error) {
+	if m.IsSquare() == false {
+		return 0.0, errors.New("matrix is not square")
+	}
+	trace := 0.0
+	for i := 0; i < m.getRowCount(); i++ {
+		for j := 0; j < m[i].getLen(); j++ {
+			if i == j {
+				trace += m[i][j]
+			}
+		}
+	}
+	return trace, nil
 }
 
 // ! old 3-dim matrix det solution

@@ -2,6 +2,8 @@ package main
 
 import (
 	"errors"
+	"fmt"
+	"math/rand"
 )
 
 // TODO Better checkColumnCounts Error
@@ -34,14 +36,71 @@ func sumFloat64(array []float64) float64 {
 	}
 	return sum
 }
+func panicer(msg string) {
+	if err := recover(); err != nil {
+		fmt.Println(msg)
+	}
+}
 
-// getColumnsCount x
+//! Matrix Creators
+
+// CreateIdentity x
+func CreateIdentity(rows, columns int) (Matrix, error) {
+	if rows != columns {
+		return nil, errors.New("Identity Matrix must have same row and column length")
+	}
+	var newMatrix Matrix
+	for i := 0; i < rows; i++ {
+		var newVector Vector
+		for j := 0; j < columns; j++ {
+			if i == j {
+				if i == j {
+					newVector = append(newVector, 1)
+				}
+			} else {
+				if i != j {
+					newVector = append(newVector, 0)
+				}
+			}
+		}
+		newMatrix = append(newMatrix, newVector)
+	}
+	return newMatrix, nil
+}
+
+// RandomMatrix x
+func RandomMatrix(rows, columns int, maxSeed int) (Matrix, error) {
+	var newMatrix Matrix
+	for i := 0; i < rows; i++ {
+		var newVector Vector
+		for j := 0; j < columns; j++ {
+			fakeSeed := rand.Intn(maxSeed)
+			if fakeSeed%(rand.Intn(3)+1) == 0 {
+				fakeSeed *= -1
+			}
+			newVector = append(newVector, rand.Float64()*float64(fakeSeed))
+		}
+		newMatrix = append(newMatrix, newVector)
+	}
+	return newMatrix, nil
+}
+
+// getColumnsCount returns list of all columns
 func (m Matrix) getColumnsCount() []int {
 	var lengths []int
 	for _, v := range m {
 		lengths = append(lengths, v.getLen())
 	}
 	return lengths
+}
+
+// getColumnCount returns only one column length
+func (m Matrix) getColumnCount() int {
+	var lengths []int
+	for _, v := range m {
+		lengths = append(lengths, v.getLen())
+	}
+	return lengths[0]
 }
 
 // GetRowCount x
@@ -165,12 +224,12 @@ func (m Matrix) Multiply(m2 Matrix) (Matrix, error) {
 	if m.checkColumnCounts() == false || m2.checkColumnCounts() == false {
 		panic("Matrix Columns Defined Wrong")
 	}
-	if m2.getRowCount() != m.getColumnsCount()[0] {
+	if m2.getRowCount() != m.getColumnCount() {
 		return nil, errors.New("matrix dimensions are not suitable for dot product")
 	}
 	firstRowCount := m.getRowCount()
 	secondRowCount := m2.getRowCount()
-	secondColumnCount := m2.getColumnsCount()[0]
+	secondColumnCount := m2.getColumnCount()
 	var newMatrix Matrix
 
 	for fc := 0; fc < secondColumnCount; fc++ {
@@ -370,6 +429,7 @@ func (m Matrix) Determinant() (float64, error) {
 
 // Inverse x
 func (m Matrix) Inverse() (Matrix, error) {
+	// defer panicer("Matrix Columns Defined Wrong")
 	if m.checkColumnCounts() == false {
 		panic("Matrix Columns Defined Wrong")
 	}
@@ -384,6 +444,11 @@ func (m Matrix) Inverse() (Matrix, error) {
 		for _, v := range swapped {
 			var newVector Vector
 			for _, n := range v {
+				// defer panicer("This Matrix has no Inverse") //! Better Error Management needed..
+				if det == 0 {
+					// panic("Division by Zero Error")
+					return nil, errors.New("This Matrix has no Inverse, determinant is zero")
+				}
 				newVector = append(newVector, n/det)
 			}
 			newMatrix = append(newMatrix, newVector)
@@ -400,7 +465,7 @@ func (m Matrix) Transpose() Matrix {
 	if m.checkColumnCounts() == false {
 		panic("Matrix Columns Defined Wrong")
 	}
-	columns := m.getColumnsCount()[0]
+	columns := m.getColumnCount()
 	var newMatrix Matrix
 	for i := 0; i < columns; i++ {
 		var newVector Vector

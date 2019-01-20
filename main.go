@@ -4,12 +4,10 @@ import "fmt"
 
 func main() {
 	// v1 := Vector{1, 2, 3, 4, 5, 6, 7}
-	m1 := Matrix{
-		Vector{1, 0, 0, 0},
-		Vector{0, 1, 0, 0},
-		Vector{0, 0, 1, 0},
-		Vector{0, 0, 0},
-	}
+	// m1 := Matrix{
+	// 	Vector{3, 4},
+	// 	Vector{6, 8},
+	// }
 
 	// m2 := Matrix{
 	// 	Vector{13},
@@ -30,8 +28,11 @@ func main() {
 
 	// fmt.Println(m1.Negative())
 	// fmt.Println(m2.Negative())
-	fmt.Println(m1.Trace())
-	// fmt.Println(m2.Trace())
+	a, err := RandomMatrix(4, 4, 44)
+	checker(err)
+	for _, i := range a {
+		fmt.Println(i)
+	}
 }
 
 func checker(err error) {

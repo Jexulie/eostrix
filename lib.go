@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"math/rand"
+	"time"
 )
 
 // TODO Better checkColumnCounts Error
@@ -76,6 +77,8 @@ func RandomMatrix(rows, columns int, maxSeed int) (Matrix, error) {
 		for j := 0; j < columns; j++ {
 			fakeSeed := rand.Intn(maxSeed)
 			if fakeSeed%(rand.Intn(3)+1) == 0 {
+				rand.Seed(time.Now().UTC().UnixNano())
+				time.Sleep(100 * time.Microsecond)
 				fakeSeed *= -1
 			}
 			newVector = append(newVector, rand.Float64()*float64(fakeSeed))

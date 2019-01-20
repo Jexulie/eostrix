@@ -28,10 +28,15 @@ func main() {
 
 	// fmt.Println(m1.Negative())
 	// fmt.Println(m2.Negative())
-	a, err := RandomMatrix(4, 4, 44)
-	checker(err)
-	for _, i := range a {
-		fmt.Println(i)
+	for j := 0; j < 10; j++ {
+		a, err := RandomMatrix(2, 2, 25)
+		checker(err)
+		fmt.Println(a)
+		// for _, i := range a {
+		// 	fmt.Println(i)
+		// }
+		fmt.Println()
+		fmt.Println(a.Determinant())
 	}
 }
 

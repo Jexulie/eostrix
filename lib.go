@@ -15,6 +15,23 @@ func (v Vector) getLen() int {
 	return len(v)
 }
 
+//! Helpers
+func sumInt(array []int) int {
+	sum := 0
+	for _, v := range array {
+		sum += v
+	}
+	return sum
+}
+
+func sumFloat64(array []float64) float64 {
+	sum := 0.0
+	for _, v := range array {
+		sum += v
+	}
+	return sum
+}
+
 // getColumnsCount x
 func (m Matrix) getColumnsCount() []int {
 	var lengths []int
@@ -115,7 +132,38 @@ func (m Matrix) IsDiagonal() (bool, error) {
 	return true, nil
 }
 
-// ScalarMulti x
+// Multiply (Matrix x Matrix)
+func (m Matrix) Multiply(m2 Matrix) (Matrix, error) {
+	// future Cheap Fix for Column Counts Todo Later!!
+	// TODO - WRONG!!!
+	if m2.getRowCount() != m.getColumnsCount()[0] {
+		return nil, errors.New("matrix dimensions are not suitable for dot product")
+	}
+	firstRowCount := m.getRowCount()
+	secondRowCount := m2.getRowCount()
+	secondColumnCount := m2.getColumnsCount()[0]
+	var newMatrix Matrix
+
+	for fc := 0; fc < secondColumnCount; fc++ {
+		sc := 0
+		var newVector Vector
+		for i := 0; i < firstRowCount; i++ {
+			sum := 0.0
+			for j := 0; j < secondRowCount; j++ {
+				sum += m[sc][j] * m2[j][fc]
+			}
+			newVector = append(newVector, sum)
+		}
+		newMatrix = append(newMatrix, newVector)
+		if sc >= firstRowCount {
+			sc = 0
+		}
+	}
+
+	return newMatrix, nil
+}
+
+// ScalarMulti (Matrix x Scalar)
 func (m Matrix) ScalarMulti(num float64) Matrix {
 	var newMatrix Matrix
 	for _, v := range m {

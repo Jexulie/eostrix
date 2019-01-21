@@ -216,8 +216,8 @@ func (m Matrix) Swap() (Matrix, error) {
 	return nil, nil
 }
 
-// MinorsArray x
-func (m Matrix) MinorsArray() (Matrix, error) {
+// GetMinorsMatrix x
+func (m Matrix) GetMinorsMatrix() (Matrix, error) {
 	if m.IsSquare() == false {
 		return nil, errors.New("matrix is not square")
 	}

@@ -65,7 +65,31 @@ func (m Matrix) Inverse() (Matrix, error) {
 		}
 		return newMatrix, nil
 	} else if m.GetRowCount() >= 3 {
-		// TODO for 3x3 or more
+		detOriginal, _ := m.Determinant()
+		if detOriginal == 0 {
+			// panic("Division by Zero Error")
+			return nil, errors.New("This Matrix has no Inverse, determinant is zero")
+		}
+		minors, _ := m.GetMinorsMatrix()
+		c := minors.GetColumnCount()
+		r := minors.GetRowCount()
+
+		var cofactors Matrix
+		for i := 0; i < c; i++ {
+			var tempVector Vector
+			for j := 0; j < r; j++ {
+				n := minors[i][j] * -1
+				if (j%2 == 0) == (i%2 == 0) || (j%2 == 1) == (i%2 == 1) {
+					n = n * -1
+				}
+				tempVector = append(tempVector, n)
+			}
+			cofactors = append(cofactors, tempVector)
+		}
+
+		trans := cofactors.Transpose()
+		finally := trans.ScalarMulti(1 / detOriginal)
+		return finally, nil
 	}
 	return nil, nil
 }

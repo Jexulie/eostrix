@@ -1,36 +1,35 @@
 package main
 
-import "errors"
+import (
+	"errors"
+)
 
 // Multiply (Matrix x Matrix)
 func (m Matrix) Multiply(m2 Matrix) (Matrix, error) {
 	// future Cheap Fix for Column Counts Todo Later!!
-	// TODO - WRONG!!!
 	if m.CheckColumnCounts() == false || m2.CheckColumnCounts() == false {
 		panic("Matrix Columns Defined Wrong")
 	}
 	if m2.GetRowCount() != m.GetColumnCount() {
 		return nil, errors.New("matrix dimensions are not suitable for dot product")
 	}
-	firstRowCount := m.GetRowCount()
-	secondRowCount := m2.GetRowCount()
-	secondColumnCount := m2.GetColumnCount()
+	fRowCount := m.GetRowCount()
+	sRowCount := m2.GetRowCount()
+	sColumnCount := m2.GetColumnCount()
 	var newMatrix Matrix
 
-	for fc := 0; fc < secondColumnCount; fc++ {
-		sc := 0
+	for a, j := 0, 0; a < fRowCount; a++ {
 		var newVector Vector
-		for i := 0; i < firstRowCount; i++ {
+		for i := 0; i < sColumnCount; {
 			sum := 0.0
-			for j := 0; j < secondRowCount; j++ {
-				sum += m[sc][j] * m2[j][fc]
+			for k := 0; k < sRowCount; k++ {
+				sum += m[j][k] * m2[k][i]
 			}
 			newVector = append(newVector, sum)
+			i++
 		}
+		j++
 		newMatrix = append(newMatrix, newVector)
-		if sc >= firstRowCount {
-			sc = 0
-		}
 	}
 
 	return newMatrix, nil

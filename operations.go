@@ -70,7 +70,7 @@ func (m Matrix) Inverse() (Matrix, error) {
 			// panic("Division by Zero Error")
 			return nil, errors.New("This Matrix has no Inverse, determinant is zero")
 		}
-		minors, _ := m.GetMinorsMatrix()
+		minors, _ := m.GetCofactorMatrix()
 		c := minors.GetColumnCount()
 		r := minors.GetRowCount()
 

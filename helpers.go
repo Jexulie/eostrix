@@ -216,8 +216,8 @@ func (m Matrix) Swap() (Matrix, error) {
 	return nil, nil
 }
 
-// GetMinorsMatrix x
-func (m Matrix) GetMinorsMatrix() (Matrix, error) {
+// GetCofactorMatrix a.k.a GetCofactorMatrix
+func (m Matrix) GetCofactorMatrix() (Matrix, error) {
 	if m.IsSquare() == false {
 		return nil, errors.New("matrix is not square")
 	}
@@ -270,4 +270,27 @@ func (m Matrix) GetMinorsMatrix() (Matrix, error) {
 	}
 
 	return minorMatrix, nil
+}
+
+// IsOrthogonal x
+func IsOrthogonal(m Matrix) (bool, error) {
+	if m.IsSquare() == false {
+		return false, errors.New("matrix is not square")
+	}
+	trans := m.Transpose()
+	inverse, err := m.Inverse()
+
+	if err != nil {
+		return false, err
+	}
+
+	for i := 0; i < trans.GetRowCount(); i++ {
+		for j := 0; j < trans.GetColumnCount(); j++ {
+			if trans[i][j] != inverse[i][j] {
+				return false, nil
+			}
+		}
+	}
+
+	return true, nil
 }

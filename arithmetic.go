@@ -125,7 +125,14 @@ func (m Matrix) Divide(m2 Matrix) (Matrix, error) {
 	if m.CheckColumnCounts() == false || m2.CheckColumnCounts() == false {
 		panic("Matrix Columns Defined Wrong")
 	}
-	var newMatrix Matrix
-	// need inverse for this
-	return newMatrix, nil
+	inv, err := m2.Inverse()
+	if err != nil {
+		return nil, err
+	}
+
+	result, err := m.Multiply(inv)
+	if err != nil {
+		return nil, err
+	}
+	return result, nil
 }

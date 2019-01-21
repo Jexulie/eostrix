@@ -1,4 +1,4 @@
-package main
+package matrix
 
 import (
 	"errors"
@@ -26,6 +26,19 @@ func CreateIdentity(rows, columns int) (Matrix, error) {
 					newVector = append(newVector, 0)
 				}
 			}
+		}
+		newMatrix = append(newMatrix, newVector)
+	}
+	return newMatrix, nil
+}
+
+// CreateZero x
+func CreateZero(rows, columns int) (Matrix, error) {
+	var newMatrix Matrix
+	for i := 0; i < rows; i++ {
+		var newVector Vector
+		for j := 0; j < columns; j++ {
+			newVector = append(newVector, 0)
 		}
 		newMatrix = append(newMatrix, newVector)
 	}

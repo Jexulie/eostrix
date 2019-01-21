@@ -1,4 +1,4 @@
-package main
+package matrix
 
 // Vector type
 type Vector []float64

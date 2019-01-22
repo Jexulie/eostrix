@@ -2,7 +2,6 @@ package main
 
 import (
 	"errors"
-	"fmt"
 	"math"
 	"sort"
 	"strconv"
@@ -144,10 +143,9 @@ func (d Data) Pi() float64 {
 	return prod
 }
 
-// Quartiles x
+// Quartiles Interquartile Range
 func (d Data) Quartiles() map[string]float64 {
 	sort.Float64s(d)
-	fmt.Println(d)
 	var q1 float64
 	var q2 float64
 	var q3 float64
@@ -155,8 +153,6 @@ func (d Data) Quartiles() map[string]float64 {
 	if len(d)%2 == 0 {
 		fHalf := d[:len(d)/2]
 		sHalf := d[len(d)/2:]
-		fmt.Println(fHalf)
-		fmt.Println(sHalf)
 		q2 = (fHalf[len(sHalf)-1] + sHalf[0]) / 2
 		if len(fHalf)%2 != 0 {
 			q1 = fHalf[len(fHalf)/2]
@@ -175,8 +171,6 @@ func (d Data) Quartiles() map[string]float64 {
 	} else {
 		fHalf := d[:len(d)/2+1]
 		sHalf := d[len(d)/2:]
-		fmt.Println(fHalf)
-		fmt.Println(sHalf)
 		q2 = (fHalf[len(sHalf)-1] + sHalf[0]) / 2
 		if len(fHalf)%2 != 0 {
 			q1 = fHalf[len(fHalf)/2]

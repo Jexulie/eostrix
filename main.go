@@ -1,11 +1,11 @@
 package main
 
-import (
-	"fmt"
-)
+import "fmt"
 
 func main() {
-	fmt.Println(QuadSolve(12, 5, 7))
+	s := Pressure{105, "Bar"}
+	s.ToATM()
+	fmt.Println(s)
 }
 func checker(err error) {
 	if err != nil {

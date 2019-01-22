@@ -1,4 +1,4 @@
-package main
+package combinatronic
 
 // Comb x
 func Comb(totalNumber float64, choice float64, repetition bool) float64 {

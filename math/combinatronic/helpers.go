@@ -1,4 +1,4 @@
-package main
+package combinatronic
 
 // Factorial x
 func Factorial(num float64) float64 {
